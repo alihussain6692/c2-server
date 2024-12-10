@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Received Data</title>
+    <style>
+        body {
+            background-color: black;
+            color: white;
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            text-align: center;
+        }
+
+        h1 {
+            color: green;
+            font-size: 2em;
+            margin-bottom: 20px;
+        }
+
+        h3 {
+            margin: 10px 0;
+            font-size: 1.2em;
+        }
+
+        .card {
+            background-color: #222;
+            color: white;
+            width: 80%;
+            max-width: 600px;
+            margin: 20px;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.5);
+            transition: transform 0.3s ease;
+        }
+
+        .card:hover {
+            transform: scale(1.05);
+        }
+
+        select, button {
+            margin: 10px;
+            padding: 10px;
+            font-size: 16px;
+            background-color: #333;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        select:hover, button:hover {
+            background-color: #444;
+        }
+
+        .data-content {
+            display: none;
+            margin-top: 20px;
+        }
+
+        ul {
+            list-style-type: none;
+            padding: 0;
+            color: white;
+        }
+
+        li {
+            padding: 10px;
+            border-bottom: 1px solid white;
+        }
+
+        .data-content h2 {
+            margin-top: 20px;
+        }
+        
+    </style>
+</head>
+<body>
+
+    <div class="card">
+        <h1>Command and Control Server</h1>
+        <h3>Received Data</h3>
+        
+        <!-- Dropdown for file selection -->
+        <select id="fileSelect">
+            <option value="">Select a file</option>
+            {% for filename, _ in data %}
+                <option value="{{ filename }}">{{ filename }}</option>
+            {% endfor %}
+        </select>
+
+        <!-- Container for displaying data based on selection -->
+        <div id="dataContent" class="data-content">
+            <h2>Data Content:</h2>
+            <ul id="dataList"></ul>
+        </div>
+    </div>
+
+    <script>
+        // Function to handle file selection and display data
+        document.getElementById('fileSelect').addEventListener('change', function() {
+            var selectedFile = this.value;
+            var dataContent = document.getElementById('dataContent');
+            var dataList = document.getElementById('dataList');
+            dataList.innerHTML = ''; // Clear previous data
+
+            // If a file is selected
+            if (selectedFile) {
+                // Find the data corresponding to the selected file
+                {% for filename, data_list in data %}
+                    if (selectedFile === "{{ filename }}") {
+                        // Show the content container
+                        dataContent.style.display = 'block';
+
+                        // Display the data for the selected file
+                        {% for item in data_list %}
+                            var listItem = document.createElement('li');
+                            listItem.textContent = "{{ item }}";
+                            dataList.appendChild(listItem);
+                        {% endfor %}
+                    }
+                {% endfor %}
+            } else {
+                // Hide content if no file is selected
+                dataContent.style.display = 'none';
+            }
+        });
+    </script>
+</body>
+</html>
